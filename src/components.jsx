@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { fetchAddresses, fetchEvents, fetchSelectedEventDetails } from './thunks'
+import { API_BASE, fetchAddresses, fetchEvents } from './thunks'
 import { eventGuid, canSelectEvents, undeletedAddresses } from './selectors'
 import { actions } from './redux-store'
 
@@ -27,7 +27,8 @@ const changeHandler = (dispatch) => (e) => {
 }
 
 let UserSelectForm = ({ dispatch, userIds, selectedUserId }) => {
-  return <form action="{API_BASE}/users/{selectedUserId}/addresses" method="GET" onSubmit={submitHandler(dispatch, selectedUserId)}>
+
+  return <form action={`${API_BASE}/users/${selectedUserId}/addresses`} method="GET" onSubmit={submitHandler(dispatch, selectedUserId)}>
     <select onChange={changeHandler(dispatch)} value={selectedUserId || ''}>
       <option>Select User ID</option>
       {userIds.map((id) => {
@@ -119,6 +120,7 @@ Address = connect((state, ownProps) => {
 
 //--> App wrapper
 let App = ({ addresses, events, userIds, selectedUserId, selectedAddressId, comparingEvents, error} ) => {
+
   return <>
     {error ? <p className="error">{error}</p> : ''}
     {userIds && userIds.length ?

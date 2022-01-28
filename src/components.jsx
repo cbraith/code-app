@@ -1,9 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { connect } from 'react-redux'
 
-import { API_BASE, fetchAddresses, fetchEvents } from './thunks'
+import { API_BASE, fetchAddresses, fetchEvents, fetchSelectedEventDetails } from './thunks'
 import { eventGuid, canSelectEvents, undeletedAddresses } from './selectors'
 import { actions } from './redux-store'
+import Modal from 'react-modal'
+import mapStateToProps from 'react-redux/lib/connect/mapStateToProps';
+
+const modalStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    border: '2px solid gray'
+  }
+}
 
 
 //--> User select form
@@ -64,8 +78,41 @@ Event = connect((state, ownProps) => {
   }
 })(Event)
 
+let ComparedEvents = ({dispatch, displayObject, selectedEventDetails}) => {
+  return <div>
+    <table>
+      <thead>
+      <tr>
+        <th colSpan="2">Event 1</th>
+        <th colSpan="2">Event 2</th>
+      </tr>
+      </thead>
+      <tbody>
+      {/*{displayObject.map( row => {*/}
+      {/*  return <tr>*/}
+      {/*    <td>{row[ 0 ]}</td>*/}
+      {/*    <td>{row[ 1 ]}</td>*/}
+      {/*    <td>{row[ 2 ]}</td>*/}
+      {/*    <td>{row[ 3 ]}</td>*/}
+      {/*  </tr>*/}
+      {/*} )}*/}
+      </tbody>
+    </table>
+    <button onClick={()=>closeModal(dispatch)}>close</button>
+  </div>
+}
+ComparedEvents = connect((state, ownProps) => {
+  const displayObject = {} //[state.selectedEventDetails[0].entries(), state.selectedEventDetails[1].entries()]
+  console.log('[ComparedEvents]',state.selectedEventsDetails)
+
+  return {
+    displayObject : displayObject
+  }
+})(ComparedEvents)
+
 
 const handleCompareClick = (dispatch) => (e) => {
+  e.preventDefault()
   /*
    * Your code here (and probably elsewhere)
    *
@@ -76,8 +123,36 @@ const handleCompareClick = (dispatch) => (e) => {
    * and referenced in the comment below on line 78.
    */
 
-  // dispatch(fetchSelectedEventDetails())
+
+
+  dispatch(fetchSelectedEventDetails()).then(events => {
+    dispatch({
+      type: actions.OPEN_MODAL,
+      payload: events
+    })
+
+
+
+    /*
+    1. sort objects by keys
+    2. create display object
+    3. compare keys and values while rendering
+     */
+
+    console.log('[fetchSelectedEventDetails]', events)
+  })
 }
+
+const closeModal = (dispatch) => (e) => {
+  e.preventDefault()
+
+  dispatch({
+    type: actions.CLOSE_MODAL,
+    payload: ''
+  })
+}
+
+
 
 let EventList = ({dispatch, canCompare, events}) => {
   return <>
@@ -119,7 +194,7 @@ Address = connect((state, ownProps) => {
 
 
 //--> App wrapper
-let App = ({ addresses, events, userIds, selectedUserId, selectedAddressId, comparingEvents, error} ) => {
+let App = ({ addresses, events, userIds, selectedUserId, selectedAddressId, selectedEventDetails, error, modalOpen} ) => {
 
   return <>
     {error ? <p className="error">{error}</p> : ''}
@@ -144,6 +219,14 @@ let App = ({ addresses, events, userIds, selectedUserId, selectedAddressId, comp
         : <p>{selectedAddressId ? 'No events found.' : 'Select an address to see events'}</p>
       }
     </div>
+    <Modal
+        isOpen={modalOpen}
+        style={modalStyles}
+        contentLabel="Event Comparison"
+    >
+
+     <ComparedEvents selectedEventDetails={selectedEventDetails}/>
+    </Modal>
   </>
 }
 App = connect(state => {

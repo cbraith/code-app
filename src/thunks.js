@@ -73,6 +73,9 @@ const fetchEvents = (addressId) => (dispatch) => {
 
 const fetchSelectedEventDetails = () => (dispatch, getState) => {
   const { selectedEvents, events } = getState()
+
+  console.log(selectedEvents)
+
   return Promise.all(
     events.filter(event => {
       return !!selectedEvents[event.created_at + '-' + event.id]

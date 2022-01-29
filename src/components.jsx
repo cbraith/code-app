@@ -152,25 +152,19 @@ let ComparingEvents = ({dispatch, comparingEvents, displayObject}) => {
   return <div>
     <table>
 
-      {comparingEvents && (<thead>
-      {comparingEvents.map(event => <th>Event: {event.id.split('-')[0]}</th>)}
+      {comparingEvents && (<thead><tr>
+      {comparingEvents.map((event, idx) => <th key={idx}>Event: {event.id.split('-')[0]}</th>)}
+      </tr>
       </thead>)}
-      {/*<thead>*/}
-      {/*<tr>*/}
-      {/*  */}
-      {/*  <th colSpan="2">Event {comparingEvents ? comparingEvents[0].id : 1}</th>*/}
-      {/*  <th colSpan="2">Event {comparingEvents ? comparingEvents[1].id : 2}</th>*/}
-      {/*</tr>*/}
-      {/*</thead>*/}
       <tbody>
-      {/*{displayObject.map( row => {*/}
-      {/*  return <tr>*/}
-      {/*    <td>{row[ 0 ]}</td>*/}
-      {/*    <td>{row[ 1 ]}</td>*/}
-      {/*    <td>{row[ 2 ]}</td>*/}
-      {/*    <td>{row[ 3 ]}</td>*/}
-      {/*  </tr>*/}
-      {/*} )}*/}
+      {displayObject.map( row => {
+        return <tr>
+          <td>{row[ 0 ] !== row[2]?<strong>{row[0]}</strong>:row[0]}</td>
+          <td>{row[ 1 ] !== row[3]?<strong>{row[1]}</strong>:row[1]}</td>
+          <td>{row[ 2 ] !== row[0]?<strong>{row[2]}</strong>:row[2]}</td>
+          <td>{row[ 3 ] !== row[1]?<strong>{row[3]}</strong>:row[3]}</td>
+        </tr>
+      } )}
       </tbody>
     </table>
     <button onClick={()=>closeModal(dispatch)}>close</button>
@@ -178,10 +172,27 @@ let ComparingEvents = ({dispatch, comparingEvents, displayObject}) => {
 }
 ComparingEvents = connect((state) => {
   const displayObject = [],
-      comp = state.comparingEvents,
-      numRows = comp[0].length > comp[1].length ? comp[0].length : comp[1].length
+      comp = []// state.comparingEvents,
 
-  console.log('[ComparingEvents]', state.comparingEvents)
+  let      numRows = 0// comp[0].length > comp[1].length ? comp[0].length : comp[1].length
+
+  // add event entries to comp
+  comp[0] = Object.entries(state.comparingEvents[0])
+  comp[1] = Object.entries(state.comparingEvents[1])
+
+  numRows = comp[0].length > comp[1].length ? comp[0].length : comp[1].length
+
+  // build display object
+  for (let i = 0; i <=numRows; i += 1) {
+    displayObject.push( [
+      comp[0][i]?comp[0][i][0]:'',
+      comp[0][i]?comp[0][i][1]:'',
+      comp[1][i]?comp[1][i][0]:'',
+      comp[1][i]?comp[1][i][1]:''
+    ])
+  }
+
+  console.log('[ComparingEvents]', displayObject)
 
 
 

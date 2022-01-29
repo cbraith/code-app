@@ -109,10 +109,9 @@ const reducer = (state, action) => {
       }
     //TODO: rename to DISPLAY_MODAL
       case actions.OPEN_MODAL:
-      console.log(`[${actions.OPEN_MODAL}]`, action.payload)
       return {
         ...state,
-        selectedEventDetails: action.payload,
+        comparingEvents: action.payload,
         modalOpen: true
 
       }
@@ -135,7 +134,7 @@ const initialState = {
   selectedUserId: null,
   selectedAddressId: null,
   selectedEvents: {},
-  selectedEventDetails: {},
+  comparingEvents: {},
   error: null,
   modalOpen: false
 }

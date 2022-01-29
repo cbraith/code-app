@@ -78,39 +78,6 @@ Event = connect((state, ownProps) => {
   }
 })(Event)
 
-let ComparedEvents = ({dispatch, displayObject, selectedEventDetails}) => {
-  return <div>
-    <table>
-      <thead>
-      <tr>
-        <th colSpan="2">Event 1</th>
-        <th colSpan="2">Event 2</th>
-      </tr>
-      </thead>
-      <tbody>
-      {/*{displayObject.map( row => {*/}
-      {/*  return <tr>*/}
-      {/*    <td>{row[ 0 ]}</td>*/}
-      {/*    <td>{row[ 1 ]}</td>*/}
-      {/*    <td>{row[ 2 ]}</td>*/}
-      {/*    <td>{row[ 3 ]}</td>*/}
-      {/*  </tr>*/}
-      {/*} )}*/}
-      </tbody>
-    </table>
-    <button onClick={()=>closeModal(dispatch)}>close</button>
-  </div>
-}
-ComparedEvents = connect((state, ownProps) => {
-  const displayObject = {} //[state.selectedEventDetails[0].entries(), state.selectedEventDetails[1].entries()]
-  console.log('[ComparedEvents]',state.selectedEventsDetails)
-
-  return {
-    displayObject : displayObject
-  }
-})(ComparedEvents)
-
-
 const handleCompareClick = (dispatch) => (e) => {
   e.preventDefault()
   /*
@@ -128,7 +95,7 @@ const handleCompareClick = (dispatch) => (e) => {
   dispatch(fetchSelectedEventDetails()).then(events => {
     dispatch({
       type: actions.OPEN_MODAL,
-      payload: events
+      payload: events.payload
     })
 
 
@@ -139,7 +106,7 @@ const handleCompareClick = (dispatch) => (e) => {
     3. compare keys and values while rendering
      */
 
-    console.log('[fetchSelectedEventDetails]', events)
+    // console.log('[fetchSelectedEventDetails]', events)
   })
 }
 
@@ -181,6 +148,45 @@ const handleAddressClick = (dispatch, id) => (e) => {
   dispatch(fetchEvents(id))
 }
 
+let ComparingEvents = ({dispatch, comparingEvents, displayObject}) => {
+  return <div>
+    <table>
+
+      {comparingEvents && (<thead>
+      {comparingEvents.map(event => <th>Event: {event.id.split('-')[0]}</th>)}
+      </thead>)}
+      {/*<thead>*/}
+      {/*<tr>*/}
+      {/*  */}
+      {/*  <th colSpan="2">Event {comparingEvents ? comparingEvents[0].id : 1}</th>*/}
+      {/*  <th colSpan="2">Event {comparingEvents ? comparingEvents[1].id : 2}</th>*/}
+      {/*</tr>*/}
+      {/*</thead>*/}
+      <tbody>
+      {/*{displayObject.map( row => {*/}
+      {/*  return <tr>*/}
+      {/*    <td>{row[ 0 ]}</td>*/}
+      {/*    <td>{row[ 1 ]}</td>*/}
+      {/*    <td>{row[ 2 ]}</td>*/}
+      {/*    <td>{row[ 3 ]}</td>*/}
+      {/*  </tr>*/}
+      {/*} )}*/}
+      </tbody>
+    </table>
+    <button onClick={()=>closeModal(dispatch)}>close</button>
+  </div>
+}
+ComparingEvents = connect((state) => {
+  const displayObject = [],
+      comp = state.comparingEvents,
+      numRows = comp[0].length > comp[1].length ? comp[0].length : comp[1].length
+
+  console.log('[ComparingEvents]', state.comparingEvents)
+
+
+
+  return { displayObject: displayObject }
+})(ComparingEvents)
 
 let Address = ({ dispatch, addressJson, isSelected }) => {
   return <li onClick={handleAddressClick(dispatch, addressJson.id)} className={isSelected ? 'selected' : ''}>
@@ -194,7 +200,7 @@ Address = connect((state, ownProps) => {
 
 
 //--> App wrapper
-let App = ({ addresses, events, userIds, selectedUserId, selectedAddressId, selectedEventDetails, error, modalOpen} ) => {
+let App = ({ addresses, events, userIds, selectedUserId, selectedAddressId, comparingEvents, error, modalOpen} ) => {
 
   return <>
     {error ? <p className="error">{error}</p> : ''}
@@ -225,7 +231,7 @@ let App = ({ addresses, events, userIds, selectedUserId, selectedAddressId, sele
         contentLabel="Event Comparison"
     >
 
-     <ComparedEvents selectedEventDetails={selectedEventDetails}/>
+     <ComparingEvents comparingEvents={comparingEvents} />
     </Modal>
   </>
 }

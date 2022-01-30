@@ -5,14 +5,7 @@ const API_BASE = 'http://localhost:27606'
 
 const fetchUserIds = () => (dispatch, getState) => {
   console.log(`[fetchUserIds] attempt: ${getState().userRequestCount}`)
-  return fetch(`${API_BASE}/user_id`, {
-    mode: 'no-cors',
-    method: 'GET',
-    headers: {
-      'Content-Type':'application/json',
-      Accept: 'application/json'
-    }
-  }).then((response) => {
+  return fetch(`${API_BASE}/user_id`).then((response) => {
     console.log('[response]', response)
     if (response.status >= HttpStatus.INTERNAL_SERVER_ERROR) {
       return dispatch({
@@ -33,7 +26,6 @@ const fetchUserIds = () => (dispatch, getState) => {
       payload: data
     })
   }, err => {
-    console.log('[err]', err)
     return dispatch({
       type: actions.FETCH_USERS_ERROR
     })

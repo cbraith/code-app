@@ -17,7 +17,7 @@ const actions = {
   TOGGLE_EVENT_SELECTION: 'toggle_event_selection',
   EVENT_DETAILS_SUCCESS: 'event_details_success',
   EVENT_DETAILS_ERROR: 'event_details_error',
-  OPEN_MODAL: 'open_modal',
+  DISPLAY_MODAL: 'open_modal',
   CLOSE_MODAL: 'close_modal'
 }
 
@@ -119,8 +119,7 @@ const reducer = (state, action) => {
         ...state,
         error : action.payload
       }
-    //TODO: rename to DISPLAY_MODAL
-      case actions.OPEN_MODAL:
+      case actions.DISPLAY_MODAL:
       return {
         ...state,
         comparingEvents: action.payload,

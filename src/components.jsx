@@ -110,7 +110,7 @@ const handleCompareClick = dispatch => e => {
 
   dispatch(fetchSelectedEventDetails()).then(events => {
     dispatch({
-      type: actions.OPEN_MODAL,
+      type: actions.DISPLAY_MODAL,
       payload: events.payload
     })
 

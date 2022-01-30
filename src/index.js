@@ -15,8 +15,22 @@ import "./index.css";
  *
  */
 const rootElement = document.getElementById('root')
+const requestInterval = 10000
+
+let fetchUserIdsId = setInterval(handleUserIdFetch, requestInterval)
 
 store.dispatch(fetchUserIds())
+
+function handleUserIdFetch() {
+  let state = store.getState()
+
+  if (state.shouldFetchUserIds && state.userRequestCount > 0) {
+    store.dispatch(fetchUserIds())
+  } else {
+    clearInterval(fetchUserIdsId)
+  }
+}
+
 ReactDOM.render(
   <Provider store={store}>
     <App />

@@ -7,6 +7,7 @@ import { canSelectEvents } from './selectors'
 const actions = {
   FETCH_USERS_SUCCESS: 'fetch_users_success', // really doesn't matter what the values are
   FETCH_USERS_ERROR: 'fetch_users_error',
+  FETCH_USERS_ISSUE: 'fetch_users_issue',
   CHANGE_SELECTED_USER_ID: 'change_selected_user_id',
   FETCH_ADDRESS_SUCCESS: 'fetch_address_success',
   FETCH_ADDRESS_ERROR: 'fetch_address_error',
@@ -27,12 +28,23 @@ const reducer = (state, action) => {
     case actions.FETCH_USERS_SUCCESS:
       return {
         ...state,
-        userIds : action.payload
+        userIds : action.payload,
+        shouldFetchUserIds: false,
+        userRequestCount: state.userRequestCount - 1,
+        error: ''
       }
     case actions.FETCH_USERS_ERROR:
       return {
         ...state,
+        userRequestCount: state.userRequestCount - 1,
         error : "Something went wrong while fetching users."
+      }
+    case actions.FETCH_USERS_ISSUE:
+      return {
+        ...state,
+        shouldFetchUserIds: false,
+        userRequestCount: state.userRequestCount - 1,
+        error: "There was a problem."
       }
     case actions.CHANGE_SELECTED_USER_ID:
       return {
@@ -136,7 +148,9 @@ const initialState = {
   selectedEvents: {},
   comparingEvents: {},
   error: null,
-  modalOpen: false
+  modalOpen: false,
+  userRequestCount: 5,
+  shouldFetchUserIds: true
 }
 
 const store = createStore(reducer, initialState, applyMiddleware(thunk))

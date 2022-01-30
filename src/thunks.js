@@ -1,12 +1,26 @@
 import { actions } from './redux-store';
+import HttpStatus from 'http-status-codes'
 
 const API_BASE = 'http://localhost:27606'
 
-const fetchUserIds = () => (dispatch) => {
-  return fetch(`${API_BASE}/user_ids`).then((response) => {
-    if (!response.ok) {
+const fetchUserIds = () => (dispatch, getState) => {
+  console.log(`[fetchUserIds] attempt: ${getState().userRequestCount}`)
+  return fetch(`${API_BASE}/user_id`, {
+    mode: 'no-cors',
+    method: 'GET',
+    headers: {
+      'Content-Type':'application/json',
+      Accept: 'application/json'
+    }
+  }).then((response) => {
+    console.log('[response]', response)
+    if (response.status >= HttpStatus.INTERNAL_SERVER_ERROR) {
       return dispatch({
         type: actions.FETCH_USERS_ERROR,
+      })
+    } else if (response.status >= HttpStatus.BAD_REQUEST && response.status < HttpStatus.INTERNAL_SERVER_ERROR) {
+      return dispatch({
+        type: actions.FETCH_USERS_ISSUE,
       })
     }
 
@@ -19,6 +33,7 @@ const fetchUserIds = () => (dispatch) => {
       payload: data
     })
   }, err => {
+    console.log('[err]', err)
     return dispatch({
       type: actions.FETCH_USERS_ERROR
     })
@@ -73,8 +88,6 @@ const fetchEvents = (addressId) => (dispatch) => {
 
 const fetchSelectedEventDetails = () => (dispatch, getState) => {
   const { selectedEvents, events } = getState()
-
-  console.log(selectedEvents)
 
   return Promise.all(
     events.filter(event => {

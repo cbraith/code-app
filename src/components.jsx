@@ -1,6 +1,5 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import _ from 'lodash'
 
 import {
   API_BASE,
@@ -174,6 +173,7 @@ let isUniqueKey = (key, keys) => {
 }
 
 let ComparingEvents = ({ dispatch, comparingEvents, displayObject }) => {
+  console.log('[ComparingEvents]', displayObject)
   return (
     <div>
       <table>
@@ -200,7 +200,11 @@ let ComparingEvents = ({ dispatch, comparingEvents, displayObject }) => {
                   )}
                 </td>
                 <td>
-                  {row[1] !== row[3] ? <strong>{row[1]}</strong> : row[1]}
+                  {row[1] !== comparingEvents[1][row[0]] ? (
+                    <strong>{row[1]}</strong>
+                  ) : (
+                    row[1]
+                  )}
                 </td>
                 <td>
                   {isUniqueKey(row[2], Object.keys(comparingEvents[0])) ? (
@@ -210,7 +214,11 @@ let ComparingEvents = ({ dispatch, comparingEvents, displayObject }) => {
                   )}
                 </td>
                 <td>
-                  {row[3] !== row[1] ? <strong>{row[3]}</strong> : row[3]}
+                  {row[3] !== comparingEvents[0][row[2]] ? (
+                    <strong>{row[3]}</strong>
+                  ) : (
+                    row[3]
+                  )}
                 </td>
               </tr>
             )

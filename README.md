@@ -1,10 +1,7 @@
 # Noyo UI coding challenge
 
-## Installation
-1. Run `yarn install` to add application dependencies.
-2. Run `yarn start` to launch the app.
-
-**Note** The `API_BASE` constant was updated to port 27606 from 5000 because this it what ran locally. Please restore to 5000 if necessary.
+## Note
+The `API_BASE` constant was updated to port 27606 from 5000 because this it what ran locally. Please restore to 5000 if necessary.
 
 ## Background
 One of our biggest challenges at Noyo is understanding how our data changes over time and why. This allows us to understand the state of our system when a given transaction was executed, and to inspect how and why the data changed since the request was made. It allows us to answer important questions such as:

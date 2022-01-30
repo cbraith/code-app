@@ -169,6 +169,10 @@ const handleAddressClick = (dispatch, id) => e => {
   dispatch(fetchEvents(id))
 }
 
+let isUniqueKey = (key, keys) => {
+  return keys.indexOf(key) === -1
+}
+
 let ComparingEvents = ({ dispatch, comparingEvents, displayObject }) => {
   return (
     <div>
@@ -189,13 +193,21 @@ let ComparingEvents = ({ dispatch, comparingEvents, displayObject }) => {
             return (
               <tr>
                 <td>
-                  {row[0] !== row[2] ? <strong>{row[0]}</strong> : row[0]}
+                  {isUniqueKey(row[0], Object.keys(comparingEvents[1])) ? (
+                    <strong>{row[0]}</strong>
+                  ) : (
+                    row[0]
+                  )}
                 </td>
                 <td>
                   {row[1] !== row[3] ? <strong>{row[1]}</strong> : row[1]}
                 </td>
                 <td>
-                  {row[2] !== row[0] ? <strong>{row[2]}</strong> : row[2]}
+                  {isUniqueKey(row[2], Object.keys(comparingEvents[0])) ? (
+                    <strong>{row[2]}</strong>
+                  ) : (
+                    row[2]
+                  )}
                 </td>
                 <td>
                   {row[3] !== row[1] ? <strong>{row[3]}</strong> : row[3]}
@@ -214,60 +226,12 @@ let ComparingEvents = ({ dispatch, comparingEvents, displayObject }) => {
 ComparingEvents = connect(state => {
   const displayObject = []
   const comp = [] // state.comparingEvents,
-  const pushToBottom = (entries, keys, key) => {
-    let toBottom = entries[keys.indexOf(key)]
-
-    _.pull(entries, toBottom)
-
-    return entries.push(toBottom)
-  }
 
   let numRows = 0 // comp[0].length > comp[1].length ? comp[0].length : comp[1].length
-  let uniques = []
-  let comp0Keys = Object.keys(state.comparingEvents[0])
-  let comp1Keys = Object.keys(state.comparingEvents[1])
 
   // add event entries to comp
   comp[0] = Object.entries(state.comparingEvents[0]).sort()
   comp[1] = Object.entries(state.comparingEvents[1]).sort()
-
-  /*
-  1. check if each key is in the other pile
-  2. splice extra key out and append to end
-  3. restart loop minus 1
-   */
-
-  // get unique keys
-  uniques = _.difference(
-    Object.keys(state.comparingEvents[0]),
-    Object.keys(state.comparingEvents[1])
-  ).concat(
-    _.difference(
-      Object.keys(state.comparingEvents[1]),
-      Object.keys(state.comparingEvents[0])
-    )
-  )
-
-  console.log(
-    '[ComparingEvents]',
-    uniques,
-    Object.keys(state.comparingEvents[0]),
-    Object.keys(state.comparingEvents[1])
-  )
-
-  // shuffle unique keys to bottom
-  uniques.forEach(key => {
-    if (comp0Keys.indexOf(key) !== -1) {
-      // let toBottom = comp[0][comp0Keys.indexOf(key)]
-      //
-      // _.pull(comp[0], toBottom)
-      // comp[0].push(toBottom)
-
-      pushToBottom(comp[0], comp0Keys, key)
-    } else {
-      pushToBottom(comp[1], comp1Keys, key)
-    }
-  })
 
   numRows = comp[0].length > comp[1].length ? comp[0].length : comp[1].length
 

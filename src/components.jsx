@@ -98,29 +98,12 @@ Event = connect((state, ownProps) => {
 
 const handleCompareClick = dispatch => e => {
   e.preventDefault()
-  /*
-   * Your code here (and probably elsewhere)
-   *
-   *
-   * We've provided a thunk function to fetch
-   * event data.
-   * Find it in thunks.js, lines 81-107,
-   * and referenced in the comment below on line 78.
-   */
 
   dispatch(fetchSelectedEventDetails()).then(events => {
     dispatch({
       type: actions.DISPLAY_MODAL,
       payload: events.payload
     })
-
-    /*
-    1. sort objects by keys
-    2. create display object
-    3. compare keys and values while rendering
-     */
-
-    // console.log('[fetchSelectedEventDetails]', events)
   })
 }
 
@@ -173,7 +156,6 @@ let isUniqueKey = (key, keys) => {
 }
 
 let ComparingEvents = ({ dispatch, comparingEvents, displayObject }) => {
-  console.log('[ComparingEvents]', displayObject)
   return (
     <div>
       <table>
@@ -181,7 +163,7 @@ let ComparingEvents = ({ dispatch, comparingEvents, displayObject }) => {
           <thead>
             <tr>
               {comparingEvents.map((event, idx) => (
-                <th colSpan={2} key={idx}>
+                <th key={idx} colSpan={2}>
                   Event: {event.id.split('-')[0]}
                 </th>
               ))}
@@ -189,9 +171,9 @@ let ComparingEvents = ({ dispatch, comparingEvents, displayObject }) => {
           </thead>
         )}
         <tbody>
-          {displayObject.map(row => {
+          {displayObject.map((row, idx) => {
             return (
-              <tr>
+              <tr key={idx}>
                 <td>
                   {isUniqueKey(row[0], Object.keys(comparingEvents[1])) ? (
                     <strong>{row[0]}</strong>
@@ -233,9 +215,9 @@ let ComparingEvents = ({ dispatch, comparingEvents, displayObject }) => {
 }
 ComparingEvents = connect(state => {
   const displayObject = []
-  const comp = [] // state.comparingEvents,
+  const comp = []
 
-  let numRows = 0 // comp[0].length > comp[1].length ? comp[0].length : comp[1].length
+  let numRows = 0
 
   // add event entries to comp
   comp[0] = Object.entries(state.comparingEvents[0]).sort()
@@ -252,8 +234,6 @@ ComparingEvents = connect(state => {
       comp[1][i] ? comp[1][i][1] : ''
     ])
   }
-
-  console.log('[ComparingEvents]', displayObject)
 
   return { displayObject: displayObject }
 })(ComparingEvents)
@@ -323,6 +303,7 @@ let App = ({
         isOpen={modalOpen}
         style={modalStyles}
         contentLabel="Event Comparison"
+        appElement={document.getElementById('root')}
       >
         <ComparingEvents comparingEvents={comparingEvents} />
       </Modal>

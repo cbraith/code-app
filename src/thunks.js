@@ -1,14 +1,13 @@
 import { actions } from './redux-store'
 import HttpStatus from 'http-status-codes'
 
+// was set to port 5000 but address server runs at 27606
 const API_BASE = 'http://localhost:27606'
 
-const fetchUserIds = () => (dispatch, getState) => {
-  console.log(`[fetchUserIds] attempt: ${getState().userRequestCount}`)
+const fetchUserIds = () => dispatch => {
   return fetch(`${API_BASE}/user_ids`)
     .then(
       response => {
-        console.log('[response]', response)
         if (response.status >= HttpStatus.INTERNAL_SERVER_ERROR) {
           return dispatch({
             type: actions.FETCH_USERS_ERROR

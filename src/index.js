@@ -2,12 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 
-import { store } from './redux-store';
+import { store } from './redux-store'
 import { fetchUserIds } from './thunks'
 import { App } from './components.jsx'
 
-import "./index.css";
-
+import './index.css'
 
 /**
  *
@@ -25,6 +24,9 @@ function handleUserIdFetch() {
   let state = store.getState()
 
   if (state.shouldFetchUserIds && state.userRequestCount > 0) {
+    console.log(
+      `[fetchUserIds] Failed to load user ids. Attempts remaining: ${state.userRequestCount}`
+    )
     store.dispatch(fetchUserIds())
   } else {
     clearInterval(fetchUserIdsId)
@@ -37,4 +39,3 @@ ReactDOM.render(
   </Provider>,
   rootElement
 )
-
